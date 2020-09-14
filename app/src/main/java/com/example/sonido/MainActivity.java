@@ -9,9 +9,12 @@ import android.view.View;
 import android.widget.MediaController;
 import android.widget.VideoView;
 
+import java.io.IOException;
+
 public class MainActivity extends AppCompatActivity {
 
-    private MediaPlayer mp;
+    private MediaPlayer mpBebe;
+    private MediaPlayer mpCoche;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,31 +30,42 @@ public class MainActivity extends AppCompatActivity {
         vista.setMediaController(mc);
         vista.setVideoURI(ruta);
         // Comenzamos el video
-//        vista.start();
+        vista.start();
     }
 
-    public void pulsarBebe(View view) {
-        if ((mp!= null) && (!mp.isPlaying())){
-            mp.start();
+    public void pulsarBebe(View view) throws IOException {
+        if ((mpBebe != null) && (!mpBebe.isPlaying())){
+            mpBebe.prepare();  // Como se paró, es necesario preparar de nuevo nuestra instancia
+            mpBebe.start();
             return;
         }
-        if ((mp != null) && (mp.isPlaying())){ // Instancia creada y reproduciendose
-            mp.pause();                      // parar
+        if ((mpBebe != null) && (mpBebe.isPlaying())){ // Instancia creada y reproduciendose
+            mpBebe.stop();                      // parar
             return;
         }
-        if (mp == null) {                 // Instancia no existe --> la creo y reproduzco
-            mp = MediaPlayer.create(this, R.raw.bebe);
-            mp.setLooping(true);
-            mp.start();
+        if (mpBebe == null) {                 // Instancia no existe --> la creo y reproduzco
+            mpBebe = MediaPlayer.create(this, R.raw.bebe);  // Crea la instancia y la prepara
+            mpBebe.setLooping(true);
+            mpBebe.start();
             return;
         }
 
     }
 
-
-    public void pulsarCoche(View view) {
-        MediaPlayer mp = MediaPlayer.create(this, R.raw.coche);
-        mp.start();
-        //mp.stop();
+    public void pulsarCoche(View view) throws IOException {
+        if (mpCoche == null){  // No hay una Instancia
+            // Creo instancia, la preparo y la inicio
+            mpCoche = MediaPlayer.create(this, R.raw.coche);
+            mpCoche.start();
+        } else {  // Hay una instancia
+            if (mpCoche.isPlaying()) { // Si está reproduciendo
+                // la detengo y la preparo para una nueva reprodución
+                mpCoche.stop();
+                mpCoche.prepare();
+            } else {                    // si no está reproduciendo
+                // la inicio
+                mpCoche.start();
+            }
+        }
     }
 }
