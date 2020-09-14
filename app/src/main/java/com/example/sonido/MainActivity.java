@@ -34,22 +34,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void pulsarBebe(View view) throws IOException {
-        if ((mpBebe != null) && (!mpBebe.isPlaying())){
-            mpBebe.prepare();  // Como se paró, es necesario preparar de nuevo nuestra instancia
+        if (mpBebe == null){  // No hay una Instancia
+            // Creo instancia, la preparo y la inicio
+            mpBebe = MediaPlayer.create(this, R.raw.bebe);
             mpBebe.start();
-            return;
+        } else {  // Hay una instancia
+            if (mpBebe.isPlaying()) { // Si está reproduciendo
+                // la detengo y la preparo para una nueva reprodución
+                mpBebe.stop();
+                mpBebe.prepare();
+            } else {                    // si no está reproduciendo
+                // la inicio
+                mpBebe.start();
+            }
         }
-        if ((mpBebe != null) && (mpBebe.isPlaying())){ // Instancia creada y reproduciendose
-            mpBebe.stop();                      // parar
-            return;
-        }
-        if (mpBebe == null) {                 // Instancia no existe --> la creo y reproduzco
-            mpBebe = MediaPlayer.create(this, R.raw.bebe);  // Crea la instancia y la prepara
-            mpBebe.setLooping(true);
-            mpBebe.start();
-            return;
-        }
-
     }
 
     public void pulsarCoche(View view) throws IOException {
